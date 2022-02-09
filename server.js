@@ -1,5 +1,5 @@
 //Default package that exist within NodeJS.
-//Does not require a separate install.
+// Does not require a separate install.
 const http = require('http');
 
 const server = http.createServer((request, response) => {
@@ -13,15 +13,16 @@ server.listen(PORT, () => {
 });
 //This below would be the way taught in GT Bootcamp
 
+//const express = require('express');
 
-// const express = require('express');
 // const path = require('path');
 // // const { ApolloServer } = require('apollo-server-express');
 // // const db = require('./config/connection');
 // // const { typeDefs, resolvers } = require('./schemas');
 
-// const app = express();
-// const PORT = process.env.PORT || 3001;
+//
+
+const PORT = process.env.PORT || 3001;
 // // const server = new ApolloServer({
 // //   typeDefs,
 // //   resolvers,
