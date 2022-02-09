@@ -26,7 +26,7 @@ app.post("/api/posts", (req, res, next) => {
     console.log(post);
     //201 stands for success and new resource was created
     //not required to send back data for post but doing so for demo
-    res.status(201),json({
+    res.status(201).json({
         message: "Post added successfully."
     });
 });
