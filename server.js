@@ -1,5 +1,6 @@
 //Default package that exist within NodeJS.
 // Does not require a separate install.
+const debug = require("debug")("node-angular");
 const http = require('http');
 const app = require("./server/app");
 
@@ -33,7 +34,7 @@ const onError = error => {
         throw error;
     }
     
-    const bind = typeof addr === "string" ? "pipe "+addr : "port "+port;
+    const bind = typeof addr === "string" ? "pipe "+addr : "port "+PORT;
 
     switch(error.code){
         case "EACCES":
@@ -54,7 +55,7 @@ const onError = error => {
  */
 const onListening = () => {
     const addr = server.address();
-    const bind = typeof addr === "string" ? "pipe "+addr : "port "+port;
+    const bind = typeof addr === "string" ? "pipe "+addr : "port "+PORT;
     debug(`Listening on ${bind}`);
 }
 
@@ -67,4 +68,6 @@ const server = http.createServer(app);
 server.on("error", onError);
 //Register listening log
 server.on("listening", onListening);
-server.listen(PORT);
+server.listen(PORT, () => {
+    console.log(`Backend server is listening on port ${PORT}!!!!`);
+});
