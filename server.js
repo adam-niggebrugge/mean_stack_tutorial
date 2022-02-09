@@ -3,47 +3,68 @@
 const http = require('http');
 const app = require("./server/app");
 
+/**
+ * Check that received port through Process variable is valid
+ * @param {*} val either process environment variable or develop mode 3000
+ * @returns 
+ */
+const normalizePort = val => {
+    let port = parseInt(val, 10);
+
+    if (isNaN(port)){
+        //Named piped
+        return val;
+    }
+
+    if (port >= 0) {
+       //Port number found.
+       return port; 
+    }
+
+    return false;
+};
+
+/**
+ * Simply check what error if any received and exit gracefully
+ * @param {*} error 
+ */
+const onError = error => {
+    if (error.syscall !== "listen") {
+        throw error;
+    }
+    
+    const bind = typeof addr === "string" ? "pipe "+addr : "port "+port;
+
+    switch(error.code){
+        case "EACCES":
+            console.error(bind+" requires elevated priviledges!!!!!!");
+            process.exit(1);
+            break;
+        case "EADDRINUSE":
+            console.error(bind+" is already in use!!!!!!!!!!");
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+};
+
+/**
+ * Simple arrow function that outputs when the port is listening and the value
+ */
+const onListening = () => {
+    const addr = server.address();
+    const bind = typeof addr === "string" ? "pipe "+addr : "port "+port;
+    debug(`Listening on ${bind}`);
+}
+
+const PORT = normalizePort(process.env.PORT || "3000");
+
+app.set("port", PORT);
+
 const server = http.createServer(app);
-
-const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, () => {
-    console.log(`API server running on port ${PORT}!`);
-});
-//This below would be the way taught in GT Bootcamp
-
-//const express = require('express');
-
-// const path = require('path');
-// // const { ApolloServer } = require('apollo-server-express');
-// // const db = require('./config/connection');
-// // const { typeDefs, resolvers } = require('./schemas');
-
-//
-
-// // const server = new ApolloServer({
-// //   typeDefs,
-// //   resolvers,
-// // });
-
-// // server.applyMiddleware({ app });
-
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json());
-
-// // if we're in production, serve client/build as static assets
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, '../client/build')));
-// }
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
-// });
-
-// // db.once('open', () => {
-//   app.listen(PORT, () => {
-//     console.log(`API server running on port ${PORT}!`);
-//     // log where we can go to test our GQL API
-//     // console.log(`Use GraphQL at http://localhost:${PORT}${server.graphqlPath}`);
-//   });
-// // });
+//Register listens for errors
+server.on("error", onError);
+//Register listening log
+server.on("listening", onListening);
+server.listen(PORT);
