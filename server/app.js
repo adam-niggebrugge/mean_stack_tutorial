@@ -1,6 +1,11 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const app = express();
+//This will return a valid Express middleware to parse JSON data
+app.use(bodyParser.json());
+//This will parse URL endcode date
+app.use(bodyParser.urlencoded({extended: false}));
 
 /**
  * Set up middle ware to handle the header. No path filters specified so ALL requests to Express
@@ -15,7 +20,19 @@ app.use((request, response, next) => {
     next();//all request should be allowed to continue to the next methods.
 });
 
-app.use("/api/posts", (req, res, next) => {
+app.post("/api/posts", (req, res, next) => {
+    const post = req.body;
+    
+    console.log(post);
+    //201 stands for success and new resource was created
+    //not required to send back data for post but doing so for demo
+    res.status(201),json({
+        message: "Post added successfully."
+    });
+});
+
+
+app.get("/api/get", (req, res, next) => {
     //later will actually be from 
     const posts = [
         {
@@ -29,7 +46,7 @@ app.use("/api/posts", (req, res, next) => {
             content: "This is also coming from the server!"
         }
     ];
-
+    //200 means everything is okay
     res.status(200).json({
         message: "Posts fetched successfully!",
        posts: posts

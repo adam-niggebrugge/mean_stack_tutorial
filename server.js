@@ -69,5 +69,6 @@ server.on("error", onError);
 //Register listening log
 server.on("listening", onListening);
 server.listen(PORT, () => {
+    //Output during development check
     console.log(`Backend server is listening on port ${PORT}!!!!`);
 });
