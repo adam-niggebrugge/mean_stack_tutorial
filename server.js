@@ -1,10 +1,9 @@
 //Default package that exist within NodeJS.
 // Does not require a separate install.
 const http = require('http');
+const app = require("./server/app");
 
-const server = http.createServer((request, response) => {
-    response.end("This is my first response.");
-});
+const server = http.createServer(app);
 
 const PORT = process.env.PORT || 3001;
 
@@ -22,7 +21,6 @@ server.listen(PORT, () => {
 
 //
 
-const PORT = process.env.PORT || 3001;
 // // const server = new ApolloServer({
 // //   typeDefs,
 // //   resolvers,
