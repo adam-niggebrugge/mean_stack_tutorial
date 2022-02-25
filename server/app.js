@@ -1,11 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const db = require("./config/db");
 
 const app = express();
 //This will return a valid Express middleware to parse JSON data
 app.use(bodyParser.json());
 //This will parse URL endcode date
 app.use(bodyParser.urlencoded({extended: false}));
+
+db.sync()
+    .then(() => {
+        console.log(`Synched with DB!`);
+    })
+    .catch(() =>{
+        console.log(`Db failed to synch`);
+    })
 
 /**
  * Set up middle ware to handle the header. No path filters specified so ALL requests to Express
@@ -52,5 +61,7 @@ app.get("/api/get", (req, res, next) => {
        posts: posts
     });
 });
+
+
 
 module.exports = app;
