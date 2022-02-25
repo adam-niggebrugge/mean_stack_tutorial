@@ -22,7 +22,6 @@ Post.init(
         underscored: false,
  	    tableName: "Posts",
         modelName: 'post',
-        schema: 'Data',
     }  
 );
     

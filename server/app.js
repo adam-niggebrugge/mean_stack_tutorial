@@ -2,18 +2,20 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./config/db");
 
+const Post = require("./models/post");
+
 const app = express();
 //This will return a valid Express middleware to parse JSON data
 app.use(bodyParser.json());
 //This will parse URL endcode date
 app.use(bodyParser.urlencoded({extended: false}));
 
-db.sync()
+db.sync({force: true})
     .then(() => {
         console.log(`Synched with DB!`);
     })
-    .catch(() =>{
-        console.log(`Db failed to synch`);
+    .catch((err) =>{
+        console.log(`Db failed to synch, the error is ${err}`);
     })
 
 /**
@@ -30,7 +32,10 @@ app.use((request, response, next) => {
 });
 
 app.post("/api/posts", (req, res, next) => {
-    const post = req.body;
+    const post = new Post({
+        title: req.body.title,
+        content: req.body.content
+    });
     
     console.log(post);
     //201 stands for success and new resource was created
