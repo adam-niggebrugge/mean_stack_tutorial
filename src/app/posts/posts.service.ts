@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Post } from './post.model';
+import { map } from "rxjs/operators";
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
@@ -14,7 +15,23 @@ export class PostsService {
     //expects a path (will be made more dynamic later)
     //can specify this generic git what it should expect
     //Get will also our JSON object out and there no need to recast it
-    this.http.get<{message: string, posts: Post[]}>("http://localhost:3000/api/get")
+    this.http
+      .get<{message: string, posts: Post[]}>(
+        "http://localhost:3000/api/get")
+
+      // example of pipe to remap values coming from the database when the columns would not
+      // be a match for the interface on the front end
+      //
+      // .pipe(map((postData) => {
+      //   return postData.posts.map(post => {
+      //     return {
+      //       title: post.title,
+      //       content: post.content,
+      //       id: post._id
+      //     };
+      //   });
+      // }))
+
       .subscribe((postData) => {
         this.posts = postData.posts;
         this.postsUpdated.next([...this.posts]);
@@ -37,4 +54,10 @@ export class PostsService {
         });
   }
 
+  deletePost(postId: string){
+    this.http.delete("http://localhost:3000/api/posts/"+postId)
+    .subscribe(() => {
+      console.log("Post deleted!!");
+    })
+  }
 }

@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 //This will parse URL endcode date
 app.use(bodyParser.urlencoded({extended: false}));
 
-db.sync({force: true})
+db.sync()
     .then(() => {
         console.log(`Synched with DB!`);
     })
@@ -37,7 +37,7 @@ app.post("/api/posts", (req, res, next) => {
         content: req.body.content
     });
     
-    console.log(post);
+    post.save();
     //201 stands for success and new resource was created
     //not required to send back data for post but doing so for demo
     res.status(201).json({
@@ -46,27 +46,44 @@ app.post("/api/posts", (req, res, next) => {
 });
 
 
-app.get("/api/get", (req, res, next) => {
-    //later will actually be from 
-    const posts = [
-        {
-            id: "asdf168163",
-            title: "First server-side post",
-            content: "This is coming from the server."
-        },
-        {
-            id: "avbef561sdf",
-            title: "Second server-side post",
-            content: "This is also coming from the server!"
+ app.get("/api/get", async (req, res, next) => {
+     try{
+         console.log(`Inside of app.get for blog posts`)
+        const returnedPosts = await Post.findAll()
+        
+        if(returnedPosts === null){
+            res.status(200).json({
+                message: "No posts available!"
+            })
+        } else {
+            //200 means everything is okay
+            res.status(200).json({
+                message: "Posts fetched successfully!",
+                posts: returnedPosts
+            });
         }
-    ];
-    //200 means everything is okay
-    res.status(200).json({
-        message: "Posts fetched successfully!",
-       posts: posts
-    });
+     } catch (err){
+         console.log(err);
+         res.status(500).json(err);
+     }
+   
 });
 
-
+app.delete("/api/posts/:id", async (req, res, next) => {
+    try{
+        await Post.destroy({
+            where: {
+                id: req.params.id
+            }
+        })
+        console.log("Oh dear god we just lost post id "+req.params.id);
+        res.status(200).json({
+            message: "Post Deleted"
+        })
+    } catch (err){
+        console.log(err);
+        res.status(500).json(err)
+    }
+});
 
 module.exports = app;
